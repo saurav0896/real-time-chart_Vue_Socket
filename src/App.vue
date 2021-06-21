@@ -1,106 +1,60 @@
 <template>
-   <v-container>
-     <v-row>
-       <v-col cols="6">
-          <v-card class="elevation-1">
-              <IEcharts :option="option" resizable :styles="{width:'80%', height:'400px'}" />
-          </v-card>
-       </v-col>
-       <v-col cols="6">
-          <v-card class="elevation-1">
-              <IEcharts :option="option2" resizable :styles="{width:'80%', height:'400px'}" />
-          </v-card>
-       </v-col>
-     </v-row>
-   </v-container>
+  <v-app>
+    <v-app-bar
+      app
+      color="primary"
+      dark
+    >
+      <div class="d-flex align-center">
+        <v-img
+          alt="Vuetify Logo"
+          class="shrink mr-2"
+          contain
+          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          transition="scale-transition"
+          width="40"
+        />
+
+        <v-img
+          alt="Vuetify Name"
+          class="shrink mt-1 hidden-sm-and-down"
+          contain
+          min-width="100"
+          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
+          width="100"
+        />
+      </div>
+
+      <v-spacer></v-spacer>
+
+      <v-btn
+        href="https://github.com/vuetifyjs/vuetify/releases/latest"
+        target="_blank"
+        text
+      >
+        <span class="mr-2">Latest Release</span>
+        <v-icon>mdi-open-in-new</v-icon>
+      </v-btn>
+    </v-app-bar>
+
+    <v-main>
+      <HelloWorld/>
+    </v-main>
+  </v-app>
 </template>
-    
+
 <script>
-import IEcharts from "vue-echarts-v3/src/full.js";
-import io from "socket.io-client";
-var socket = io.connect("http://localhost:4000");
-    
+import HelloWorld from './components/HelloWorld';
+
 export default {
+  name: 'App',
+
   components: {
-    IEcharts
+    HelloWorld,
   },
-  data() {
-    return {
-      option : {
-          xAxis: {
-              type: 'category',
-              data: []
-          },
-          yAxis: {
-              type: 'value'
-          },
-          series: [{
-              data: [],
-              type: 'bar'
-          },
-          {
-              data: [],
-              type: 'line'
-          }]
-      },
-      option2 : {
-          xAxis: {
-              type: 'category',
-              data: []
-          },
-          yAxis: {
-              type: 'value'
-          },
-          series: [{
-              data: [],
-              type: 'line'
-          },
-          {
-              data: [],
-              type: 'line'
-          }]
-      }
-    };
-  },
-  methods: {
-    openSocketListeners(){
-      socket.on("line1", (fetchedData, fetchTime)  => {
-        console.log("fetch", fetchedData, fetchTime);
-        this.fillData(fetchedData, fetchTime) 
-      }),
-      socket.on("line2", data => {
-        this.line2Data(data) 
-      })
-    },
-    line2Data(data){
-      if( this.option.series[1].data.length > 10){
-        this.option.series[1].data.shift();
-        this.option2.series[1].data.shift();
-      } 
-      this.option.series[1].data.push(data);
-      this.option2.series[1].data.push(data);
-    },
-    fillData(data, time){
-       if( this.option.series[0].data.length > 10){
-            this.option.series[0].data.shift();
-            this.option2.series[0].data.shift();
-            this.option.xAxis.data.shift();
-            this.option2.xAxis.data.shift();
-       }
-       this.option.series[0].data.push(data);
-       this.option2.series[0].data.push(data);
-       let newTime = new Date(time).toTimeString();
-       let currentTime = newTime.split(" ")[0];
-       this.option.xAxis.data.push(currentTime);
-       this.option2.xAxis.data.push(currentTime);
-    }
-  },
-  mounted(){
-    this.openSocketListeners();
-  }
-  
+
+  data: () => ({
+    //
+  }),
 };
 </script>
-<style>
-
-</style>
